@@ -20,7 +20,7 @@ const sqlsearchBook = "SELECT author_firstname, author_lastname,cover_thumbnail 
 
 const sqlDefaultList = "SELECT title, author_firstname, author_lastname,cover_thumbnail FROM books ORDER BY title ASC limit 10";
 
-const sqlGet = "SELECT title, author_firstname, author_lastname, cover_thumbnail FROM books WHERE title LIKE ? AND author_firstname LIKE ?"; 
+const sqlBookID = "SELECT * FROM books WHERE id=? ORDER BY title, author_firstname, author_lastname ASC"; 
 
 
 
@@ -76,6 +76,7 @@ var getTitle = makeQuery(sqlsearchTitle, pool);
 var getAuthor = makeQuery(sqlsearchBook, pool);
 var findBook = makeQuery(sqlsearchBook, pool);
 var UpdateBookList = makeQuery(sqlDefaultList, pool);
+var bookID = makeQuery(sqlBookID, pool);
 
 
 //create routes
@@ -101,7 +102,7 @@ app.get((req,res)=>{
     end;
 })
 
-app.get('/bookslib',(req,res)=>{
+app.get('/booklist',(req,res)=>{
     
         let authname = req.query.authname;    
         let bktitle = req.query.bktitle; 
@@ -119,6 +120,20 @@ app.get('/bookslib',(req,res)=>{
             res.status(500).json(error);
         });
     });
+
+app.get ('/booklist/:bkID', (req,res) => {
+        let bkID = req.params.bkID;
+
+        console.log("bkID search>>> ", bkID);
+        bookID(bkID).then((results)=>{
+            console.log('>>>Book Details is', results);
+            res.json(results);
+        }).catch((error)=>{
+            console.log(error);
+            res.status(500).json(error);
+        });
+    
+});
 
 
 //Start web server
