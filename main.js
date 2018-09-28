@@ -15,7 +15,7 @@ app.use(cors());
 
 const sqlBooks = "SELECT * FROM books";
 
-const sqlsearchBook = "SELECT author_firstname, author_lastname,cover_thumbnail FROM books WHERE author_firstname LIKE ? OR author_lastname LIKE ? AND title LIKE ? ORDER BY title, author_lastname ASC limit ? offset 0";
+const sqlsearchBook = "SELECT author_firstname, author_lastname, title, cover_thumbnail FROM books WHERE author_firstname LIKE ? OR author_lastname LIKE ? AND title LIKE ? ORDER BY title, author_lastname ASC limit ? offset 0";
 
 const sqlDefaultList = "SELECT title, author_firstname, author_lastname,cover_thumbnail FROM books ORDER BY title ASC limit 10";
 
