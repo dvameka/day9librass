@@ -4,7 +4,6 @@ require('dotenv').config()
 const express = require('express');
 const path = require('path');
 const mysql = require('mysql');
-const hbs = require('express-handlebars');
 var cors = require('cors');
 
 
@@ -12,9 +11,9 @@ var cors = require('cors');
 const app=express();
 app.use(cors());
 
-const sqlBooks = "SELECT * FROM books";
+// create and define  MySQL statements for the APIs to quer
 
-const sqlsearchTitle = "SELECT title,cover_thumbnail FROM books WHERE title LIKE ?"; //"?" is subtituted by args
+const sqlBooks = "SELECT * FROM books";
 
 const sqlsearchBook = "SELECT author_firstname, author_lastname,cover_thumbnail FROM books WHERE author_firstname LIKE ? OR author_lastname LIKE ? AND title LIKE ? ORDER BY title, author_lastname ASC limit ? offset 0";
 
@@ -22,8 +21,7 @@ const sqlDefaultList = "SELECT title, author_firstname, author_lastname,cover_th
 
 const sqlBookID = "SELECT * FROM books WHERE id=? ORDER BY title, author_firstname, author_lastname ASC"; 
 
-
-
+// Configure a connection pool to the database 
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
@@ -32,17 +30,6 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME,
     connectionLimit: process.env.DB_CONLIMIT
 })
-
-/* Config. express to use handlebars as the rendering engine
-app.engine('hbs', hbs({
-    extname: 'hbs',
-    defaultLayout: 'main',
-    layoutsDir:__dirname + '/views/layouts/'
-}));
-
-app.set('views',path.join(__dirname, '/views'));
-app.set('view engine','hbs');
-*/
 
 //Create a reuseable function to query MySQL, wraps around with Promise
 var makeQuery = (sql, pool)=>{
@@ -72,10 +59,7 @@ var makeQuery = (sql, pool)=>{
     }
 }
 
-var getTitle = makeQuery(sqlsearchTitle, pool);
-var getAuthor = makeQuery(sqlsearchBook, pool);
 var findBook = makeQuery(sqlsearchBook, pool);
-var UpdateBookList = makeQuery(sqlDefaultList, pool);
 var bookID = makeQuery(sqlBookID, pool);
 
 
