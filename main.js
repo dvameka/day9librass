@@ -16,7 +16,7 @@ const sqlBooks = "SELECT * FROM books";
 
 const sqlsearchTitle = "SELECT title,cover_thumbnail FROM books WHERE title LIKE ?"; //"?" is subtituted by args
 
-const sqlsearchBook = "SELECT author_firstname, author_lastname,cover_thumbnail FROM books WHERE author_firstname LIKE ? OR author_lastname LIKE ? AND title LIKE ? ORDER BY title, author_lastname ASC limit 20" ;
+const sqlsearchBook = "SELECT author_firstname, author_lastname,cover_thumbnail FROM books WHERE author_firstname LIKE ? OR author_lastname LIKE ? AND title LIKE ? ORDER BY title, author_lastname ASC limit ? offset 0";
 
 const sqlDefaultList = "SELECT title, author_firstname, author_lastname,cover_thumbnail FROM books ORDER BY title ASC limit 10";
 
@@ -79,26 +79,38 @@ var UpdateBookList = makeQuery(sqlDefaultList, pool);
 
 
 //create routes
-/*
-app.get('/grocery',(req,res,next)=>{
-    
-        let brand = req.query.brand;
-        console.log("brand search>>> ", findBrand);
-        findBrand(brand).then((results)=>{
-            res.json(results);
-        }).catch((error)=>{
-            console.log(error);
-            res.status(500).json(error);
-        });
-    });
-        */
+
+
+app.use(
+    express.static( // middleware to serve public path
+        path.join(__dirname + '/public')
+    )
+);
+
+app.use(
+    express.static( // middleware to serve static file
+        path.join(__dirname,'/images')
+    )
+);
+
+app.get((req,res)=>{
+    res.status(500);
+    res.type('text/html');
+    res.type('jpg')
+    res.send('<h1>Not Found</h1>');
+    end;
+})
+
 app.get('/bookslib',(req,res)=>{
     
         let authname = req.query.authname;    
-        let bktitle = req.query.bktitle;
-        let params = [authname, authname, bktitle];
-        
-
+        let bktitle = req.query.bktitle; 
+        let pglimit = +(req.query.pglimit);
+            if (pglimit == 0 ) {
+                pglimit = 10;
+            }
+        let params = [authname, authname, bktitle, pglimit];
+            
         console.log("params search>>> ", params);
         findBook(params).then((results)=>{
             res.json(results);
@@ -107,28 +119,6 @@ app.get('/bookslib',(req,res)=>{
             res.status(500).json(error);
         });
     });
-/*
-app.post('/grocer',(req, res)=>{        
-    allFilms().then((results)=>{
-        res.json(results);
-    }).catch((error)=>{
-        console.log(error);
-        res.status(500).json(error);
-    });
-*/
-/* app.get("/films/:filmId", (req, res)=>{
-    console.log("/film params !");
-    let filmId = req.params.filmId;
-    console.log(filmId);
-    findOneFilmById([parseInt(filmId)]).then((results)=>{
-        console.log(results);
-        res.json(results);
-    }).catch((error)=>{
-        res.status(500).json(error);
-    })
-    
-})
-*/
 
 
 //Start web server
